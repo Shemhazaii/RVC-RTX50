@@ -19,7 +19,7 @@ logger = logging
 
 def load_checkpoint_d(checkpoint_path, combd, sbd, optimizer=None, load_opt=1):
     assert os.path.isfile(checkpoint_path)
-    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
+    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
 
     ##################
     def go(model, bkey):
@@ -70,7 +70,7 @@ def load_checkpoint_d(checkpoint_path, combd, sbd, optimizer=None, load_opt=1):
 
 # def load_checkpoint(checkpoint_path, model, optimizer=None):
 #   assert os.path.isfile(checkpoint_path)
-#   checkpoint_dict = torch.load(checkpoint_path, map_location='cpu')
+#   checkpoint_dict = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
 #   iteration = checkpoint_dict['iteration']
 #   learning_rate = checkpoint_dict['learning_rate']
 #   if optimizer is not None:
@@ -99,7 +99,7 @@ def load_checkpoint_d(checkpoint_path, combd, sbd, optimizer=None, load_opt=1):
 #   return model, optimizer, learning_rate, iteration
 def load_checkpoint(checkpoint_path, model, optimizer=None, load_opt=1):
     assert os.path.isfile(checkpoint_path)
-    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
+    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
 
     saved_state_dict = checkpoint_dict["model"]
     if hasattr(model, "module"):
@@ -278,13 +278,8 @@ def load_wav_to_torch(full_path):
 
 
 def load_filepaths_and_text(filename, split="|"):
-    try:
-        with open(filename, encoding="utf-8") as f:
-            filepaths_and_text = [line.strip().split(split) for line in f]
-    except UnicodeDecodeError:
-        with open(filename) as f:
-            filepaths_and_text = [line.strip().split(split) for line in f]
-    
+    with open(filename, encoding="utf-8") as f:
+        filepaths_and_text = [line.strip().split(split) for line in f]
     return filepaths_and_text
 
 
@@ -317,10 +312,10 @@ def get_hparams(init=True):
         "-te", "--total_epoch", type=int, required=True, help="total_epoch"
     )
     parser.add_argument(
-        "-pg", "--pretrainG", type=str, default="", help="Pretrained Generator path"
+        "-pg", "--pretrainG", type=str, default="", help="Pretrained Discriminator path"
     )
     parser.add_argument(
-        "-pd", "--pretrainD", type=str, default="", help="Pretrained Discriminator path"
+        "-pd", "--pretrainD", type=str, default="", help="Pretrained Generator path"
     )
     parser.add_argument("-g", "--gpus", type=str, default="0", help="split by -")
     parser.add_argument(

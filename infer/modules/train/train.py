@@ -23,14 +23,16 @@ try:
 
     if torch.xpu.is_available():
         from infer.modules.ipex import ipex_init
-        from infer.modules.ipex.gradscaler import gradscaler_init
+
+        ipex_init()
+
         from torch.xpu.amp import autocast
+        from infer.modules.ipex.gradscaler import gradscaler_init
 
         GradScaler = gradscaler_init()
-        ipex_init()
     else:
         from torch.cuda.amp import GradScaler, autocast
-except Exception:
+except Exception:  # pylint: disable=broad-exception-caught
     from torch.cuda.amp import GradScaler, autocast
 
 torch.backends.cudnn.deterministic = False
@@ -99,7 +101,7 @@ def main():
         n_gpus = 1
     if n_gpus < 1:
         # patch to unblock people without gpus. there is probably a better way.
-        print("NO GPU DETECTED: falling back to CPU - this may take a while")
+        logger.warning("NO GPU DETECTED: falling back to CPU - this may take a while")
         n_gpus = 1
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = str(randint(20000, 55555))
@@ -228,13 +230,13 @@ def run(rank, n_gpus, hps, logger: logging.Logger):
             if hasattr(net_g, "module"):
                 logger.info(
                     net_g.module.load_state_dict(
-                        torch.load(hps.pretrainG, map_location="cpu")["model"]
+                        torch.load(hps.pretrainG, map_location="cpu", weights_only=False)["model"]
                     )
                 )  ##测试不加载优化器
             else:
                 logger.info(
                     net_g.load_state_dict(
-                        torch.load(hps.pretrainG, map_location="cpu")["model"]
+                        torch.load(hps.pretrainG, map_location="cpu", weights_only=False)["model"]
                     )
                 )  ##测试不加载优化器
         if hps.pretrainD != "":
@@ -243,13 +245,13 @@ def run(rank, n_gpus, hps, logger: logging.Logger):
             if hasattr(net_d, "module"):
                 logger.info(
                     net_d.module.load_state_dict(
-                        torch.load(hps.pretrainD, map_location="cpu")["model"]
+                        torch.load(hps.pretrainD, map_location="cpu", weights_only=False)["model"]
                     )
                 )
             else:
                 logger.info(
                     net_d.load_state_dict(
-                        torch.load(hps.pretrainD, map_location="cpu")["model"]
+                        torch.load(hps.pretrainD, map_location="cpu", weights_only=False)["model"]
                     )
                 )
 

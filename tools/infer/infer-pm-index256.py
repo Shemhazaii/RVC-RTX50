@@ -2,7 +2,6 @@
 
 对源特征进行检索
 """
-
 import os
 import logging
 
@@ -74,11 +73,11 @@ net_g = SynthesizerTrn256(
 # net_g = SynthesizerTrn(1025, 32, 192, 192, 768, 2, 6, 3, 0.1, "1", [3, 7, 11], [[1, 3, 5], [1, 3, 5], [1, 3, 5]], [5,5], 512, [15,15], 0)#ms
 # net_g = SynthesizerTrn(1025, 32, 192, 192, 768, 2, 6, 3, 0.1, "1", [3, 7, 11], [[1, 3, 5], [1, 3, 5], [1, 3, 5]], [10,10], 512, [16,16], 0)#idwt2
 
-# weights=torch.load("infer/ft-mi_1k-noD.pt")
-# weights=torch.load("infer/ft-mi-freeze-vocoder-flow-enc_q_1k.pt")
-# weights=torch.load("infer/ft-mi-freeze-vocoder_true_1k.pt")
-# weights=torch.load("infer/ft-mi-sim1k.pt")
-weights = torch.load("infer/ft-mi-no_opt-no_dropout.pt")
+# weights=torch.load("infer/ft-mi_1k-noD.pt", weights_only=False)
+# weights=torch.load("infer/ft-mi-freeze-vocoder-flow-enc_q_1k.pt", weights_only=False)
+# weights=torch.load("infer/ft-mi-freeze-vocoder_true_1k.pt", weights_only=False)
+# weights=torch.load("infer/ft-mi-sim1k.pt", weights_only=False)
+weights = torch.load("infer/ft-mi-no_opt-no_dropout.pt", weights_only=False)
 logger.debug(net_g.load_state_dict(weights, strict=True))
 
 net_g.eval().to(device)
