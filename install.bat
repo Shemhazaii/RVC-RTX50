@@ -58,7 +58,7 @@ REM ================================
 echo.
 echo [4/6] Install requirements...
 
-pip install -r requirements.txt
+pip install -r requirements.txt --no-binary pyworld
 
 pip install antlr4-python3-runtime==4.8
 pip install omegaconf==2.0.5 --no-deps
