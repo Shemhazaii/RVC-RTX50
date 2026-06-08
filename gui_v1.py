@@ -1,3 +1,19 @@
+import dataclasses
+_orig_get_field = dataclasses._get_field
+def _patched_get_field(cls, name, type, kw_only):
+    try:
+        return _orig_get_field(cls, name, type, kw_only)
+    except ValueError as e:
+        if "mutable default" in str(e):
+            from dataclasses import Field, MISSING, field
+            default = cls.__dict__.get(name, MISSING)
+            f = default if isinstance(default, Field) else field(default=default)
+            f.name = name
+            f.type = type
+            f._field_type = dataclasses._FIELD
+            return f
+        raise e
+dataclasses._get_field = _patched_get_field
 
 import os
 import sys
