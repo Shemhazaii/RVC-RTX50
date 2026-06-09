@@ -2,6 +2,7 @@ import os
 import traceback
 import logging
 import subprocess
+from utils.ffmpeg_helper import FFMPEG, FFPROBE
 
 
 logger = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ from infer.modules.uvr5.mdxnet import MDXNetDereverb
 from infer.modules.uvr5.preprocess import AudioPre, AudioPreDeEcho
 
 config = Config()
+
 
 
 def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format0):
@@ -48,7 +50,7 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
             need_reformat = 1
             done = 0
             try:
-                info = ffmpeg.probe(inp_path, cmd="ffprobe")
+                info = ffmpeg.probe(inp_path, cmd=FFPROBE)
                 if (
                     info["streams"][0]["channels"] == 2
                     and info["streams"][0]["sample_rate"] == "44100"
@@ -76,7 +78,7 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
                     f"{os.path.basename(inp_path)}.reformatted.wav"
                 )
                 result = subprocess.run([
-                    "ffmpeg",
+                    FFMPEG,
                     "-y",
                     "-i", inp_path,
                     "-vn",

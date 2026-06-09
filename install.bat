@@ -20,7 +20,7 @@ REM ================================
 REM Create venv
 REM ================================
 
-echo [1/6] Preparing Venv...
+echo [1/7] Preparing Venv...
 
 if not exist venv (
     py -3.11 -m venv venv
@@ -33,7 +33,7 @@ REM Upgrade pip
 REM ================================
 
 echo.
-echo [2/6] Upgrade pip...
+echo [2/7] Upgrade pip...
 
 python -m pip install pip==24.0
 python -m pip install setuptools wheel
@@ -43,7 +43,7 @@ REM Install Torch
 REM ================================
 
 echo.
-echo [3/6] Install PyTorch CUDA 12.8...
+echo [3/7] Install PyTorch CUDA 12.8...
 
 pip install ^
 torch ^
@@ -56,7 +56,7 @@ REM Install Requirements
 REM ================================
 
 echo.
-echo [4/6] Install requirements...
+echo [4/7] Install requirements...
 
 pip install -r requirements.txt --no-binary pyworld
 
@@ -70,7 +70,7 @@ REM Create Directories
 REM ================================
 
 echo.
-echo [5/6] Preparing assets...
+echo [5/7] Preparing assets...
 
 if not exist assets mkdir assets
 if not exist assets\hubert mkdir assets\hubert
@@ -83,7 +83,7 @@ REM Download Models
 REM ================================
 
 echo.
-echo [6/6] Downloading required models...
+echo [6/7] Downloading required models...
 
 if not exist assets\hubert\hubert_base.pt (
     echo Downloading HuBERT...
@@ -96,6 +96,27 @@ if not exist assets\rmvpe\rmvpe.pt (
     powershell -Command ^
     "Invoke-WebRequest 'https://huggingface.co/lj1995/VoiceConversionWebUI/resolve/main/rmvpe.pt' -OutFile 'assets\rmvpe\rmvpe.pt'"
 )
+
+REM ================================
+REM Download FFMPEG
+REM ================================
+
+echo.
+echo [7/7] Downloading ffmpeg...
+
+if not exist tools mkdir tools
+
+powershell -Command ^
+ "Invoke-WebRequest https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ffmpeg.zip"
+
+powershell -Command ^
+ "Expand-Archive ffmpeg.zip -DestinationPath ffmpeg_tmp"
+
+for /r ffmpeg_tmp %%f in (ffmpeg.exe) do copy "%%f" tools\
+for /r ffmpeg_tmp %%f in (ffprobe.exe) do copy "%%f" tools\
+
+rmdir /s /q ffmpeg_tmp
+del ffmpeg.zip
 
 echo.
 echo ======================================
