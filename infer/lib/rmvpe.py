@@ -540,10 +540,20 @@ class RMVPE:
                 return model
 
             def get_default_model():
+                logger.warning("RMVPE step 1")
                 model = E2E(4, 1, (2, 2))
+
+                logger.warning("RMVPE step 2")
                 ckpt = torch.load(model_path, map_location="cpu", weights_only=False)
+
+                logger.warning("RMVPE step 3")
                 model.load_state_dict(ckpt)
+
+                logger.warning("RMVPE step 4")
                 model.eval()
+
+                logger.warning("RMVPE step 5")
+
                 if is_half:
                     model = model.half()
                 else:
@@ -557,12 +567,14 @@ class RMVPE:
                                  Jit is not supported on the CPU for half floating point"
                     )
                     self.model = get_default_model()
+                    logger.warning("RMVPE step 6")
                 else:
                     self.model = get_jit_model()
             else:
                 self.model = get_default_model()
 
             self.model = self.model.to(device)
+            logger.warning("RMVPE step 7")
         cents_mapping = 20 * np.arange(360) + 1997.3794084376191
         self.cents_mapping = np.pad(cents_mapping, (4, 4))  # 368
 

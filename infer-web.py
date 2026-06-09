@@ -1,3 +1,20 @@
+import dataclasses
+_orig_get_field = dataclasses._get_field
+def _patched_get_field(cls, name, type, kw_only):
+    try:
+        return _orig_get_field(cls, name, type, kw_only)
+    except ValueError as e:
+        if "mutable default" in str(e):
+            from dataclasses import Field, MISSING, field
+            default = cls.__dict__.get(name, MISSING)
+            f = default if isinstance(default, Field) else field(default=default)
+            f.name = name
+            f.type = type
+            f._field_type = dataclasses._FIELD
+            return f
+        raise e
+dataclasses._get_field = _patched_get_field
+
 import os
 import sys
 
@@ -1519,9 +1536,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                 gr.Markdown(traceback.format_exc())
 
     if config.iscolab:
-        app.queue(concurrency_count=511, max_size=1022).launch(share=True)
+        app.launch(share=True)
     else:
-        app.queue(concurrency_count=511, max_size=1022).launch(
+        app.launch(
             server_name="0.0.0.0",
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,

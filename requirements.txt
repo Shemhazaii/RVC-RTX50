@@ -6,6 +6,7 @@ librosa==0.10.2
 llvmlite
 faiss-cpu
 gradio==3.34.0
+gradio-client==0.2.9
 Cython
 pydub>=0.25.1
 soundfile>=0.12.1
