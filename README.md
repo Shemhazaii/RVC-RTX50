@@ -30,7 +30,7 @@ Windows
 ```bash
  sh ./install.sh
  
- #then run start.bat or start-web.bat
+ #then run start.sh or start-web.sh
  sh ./start.sh
  sh ./start-web.bat
 ```
